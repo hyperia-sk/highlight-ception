@@ -1,0 +1,13 @@
+language: php
+
+php:
+  - 5.6
+  - 7.0
+  - 7.1
+
+before_script:
+  - phantomjs --webdriver=4444 --ignore-ssl-errors=true >/dev/null 2>&1 &
+  - composer install
+  - php vendor/bin/codecept build -c test/integration/
+
+script: php vendor/bin/codecept run -c test/integration/

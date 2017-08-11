@@ -1,0 +1,23 @@
+{
+    "name": "hyperia-sk/highlight-ception",
+    "description": "User highlight text and elements for Codeception.",
+    "homepage": "https://github.com/hyperia-sk/highlight-ception",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Lukas Mestan",
+            "email": "lukas.mestan@hyperia.sk"
+        }
+    ],
+
+    "require": {
+        "php": ">=5.4.0",
+        "codeception/codeception": "^2.2.0"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Codeception\\Module\\": "src"
+        }
+    }
+}
