@@ -1,4 +1,4 @@
-# Highlight codecept module 
+# Highlight text or element - codecept module
 
 [![Build Status](https://travis-ci.org/hyperia-sk/highlight-ception.svg?branch=master)](https://travis-ci.org/hyperia-sk/highlight-ception)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperia-sk/highlight-ception/master/LICENSE) 
