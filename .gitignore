@@ -1,2 +1,4 @@
 /nbproject/*
 /vendor/
+test/integration/tests/_helpers/*
+test/integration/tests/_log/*

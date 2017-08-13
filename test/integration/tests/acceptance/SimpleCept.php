@@ -1,5 +1,5 @@
 <?php
 $I = new WebGuy($scenario);
-$I->wantTo('check user highlight text');
-$I->amOnPage("/VisualCeption/seeVisualChanges.php");
-$I->see("#intro");
+$I->wantTo('check highlight text');
+$I->amOnPage("/");
+$I->see("Pridaj sa k nám");

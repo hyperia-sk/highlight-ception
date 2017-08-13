@@ -2,8 +2,9 @@ class_name: WebGuy
 modules:
     enabled:
         - WebDriver:
-            url: http://www.thewebhatesme.com
+            url: http://www.hyperia.sk
             browser: phantomjs
+            #browser: chrome
             host: localhost
             port: 4444
             capabilities:
