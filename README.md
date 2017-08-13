@@ -51,7 +51,7 @@ modules:
 
 ## Requirements
 
-VisualCeption needs the following components to run:
+HighlightCeption needs the following components to run:
 
 - Codeception HighlightCeption is a module for **Codeception**. It will need a running version of this tool.
 - **WebDriver module** This tool only works with the webdriver module in Codeception at the moment.
