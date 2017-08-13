@@ -2,4 +2,4 @@
 $I = new WebGuy($scenario);
 $I->wantTo('check highlight text');
 $I->amOnPage("/");
-$I->see("Pridaj sa k nám");
+$I->see("Výkonnostný Marketing");
