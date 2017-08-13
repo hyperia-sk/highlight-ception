@@ -1,6 +1,6 @@
 {
-    "name": "hyperia-sk/highlight-ception",
-    "description": "User highlight text and elements for Codeception.",
+    "name": "hyperia/highlight-ception",
+    "description": "User highlight text or elements for Codeception.",
     "homepage": "https://github.com/hyperia-sk/highlight-ception",
     "license": "MIT",
     "authors": [
