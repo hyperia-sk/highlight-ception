@@ -2,6 +2,7 @@
 
 [![Build Status](https://travis-ci.org/hyperia-sk/highlight-ception.svg?branch=master)](https://travis-ci.org/hyperia-sk/highlight-ception)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperia-sk/highlight-ception/master/LICENSE) 
+[![Latest Stable Version](https://poser.pugx.org/hyperia/highlight-ception/v/stable)](https://packagist.org/packages/hyperia/highlight-ception)
 
 This module can be used to display the current representation of css element or a text on a website with an expected. It was written on the shoulders of codeception and integrates in a very easy way.
 
