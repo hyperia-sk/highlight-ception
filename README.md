@@ -40,8 +40,8 @@ modules:
             module: WebDriver
             timeWait: 2
             cssStyle:
-                "background-color": "yellow"
-                "color": "black"
+                background-color: yellow
+                color: black
 ```
 
 ### Parameter description
