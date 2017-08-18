@@ -15,13 +15,13 @@ The preferred way to install this extension is through [composer](http://getcomp
 Either run
 
 ```shell
-composer require hyperia/highlight-ception:"^1.0"
+composer require hyperia/highlight-ception:"^1.1"
 ```
 
 or add
 
 ```
-"hyperia/highlight-ception": "^1.0"
+"hyperia/highlight-ception": "^1.1"
 ```
 
 to the require section of your composer.json.
