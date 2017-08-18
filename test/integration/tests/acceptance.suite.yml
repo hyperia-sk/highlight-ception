@@ -2,7 +2,7 @@ class_name: WebGuy
 modules:
     enabled:
         - WebDriver:
-            url: http://www.hyperia.sk
+            url: https://news.ycombinator.com/
             browser: phantomjs
             #browser: chrome
             host: localhost
