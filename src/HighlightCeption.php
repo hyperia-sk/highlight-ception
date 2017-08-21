@@ -2,6 +2,7 @@
 
 namespace Codeception\Module;
 
+use Exception;
 use Codeception\Module;
 use Codeception\TestInterface;
 use Codeception\Exception\ConfigurationException;
@@ -149,12 +150,16 @@ class HighlightCeption extends Module
      */
     private function highlightText($text)
     {
-        $this->loadJQuery();
-        $this->debug('[Highlight Text] ' . $text);
-        $this->webDriverModule->executeJs('jQuery(document).ready(function (){
-            jQuery("body").highlight("' . $text . '");
-            ' . sprintf('jQuery(".highlight").css(%s);', $this->cssStyle) . '
-        });');
+        try {
+            $this->loadJQuery();
+            $this->debug('[Highlight Text] ' . $text);
+            $this->webDriverModule->executeJs('jQuery(document).ready(function (){
+                jQuery("body").highlight("' . $text . '");
+                ' . sprintf('jQuery(".highlight").css(%s);', $this->cssStyle) . '
+            });');
+        } catch(Exception $e) {
+            $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
+        }
     }
 
     /**
@@ -164,17 +169,21 @@ class HighlightCeption extends Module
      */
     private function highlightElement($selector)
     {
-        $locator = $this->getSelector($selector);
-        if ($locator) {
-            $this->loadJQuery();
-            if (Locator::isXPath($locator)) {
-                $this->loadJQueryXPath();
-                $this->debug('[Highlight XPath] ' . Locator::humanReadableString($locator));
-                $this->webDriverModule->executeJs(sprintf('jQuery(document).xpath("%s").css(%s);', addslashes($locator), $this->cssStyle));
-            } else {
-                $this->debug('[Highlight Selector] ' . Locator::humanReadableString($locator));
-                $this->webDriverModule->executeJs(sprintf('jQuery("%s").css(%s);', addslashes($locator), $this->cssStyle));
+        try {
+            $locator = $this->getSelector($selector);
+            if ($locator) {
+                $this->loadJQuery();
+                if (Locator::isXPath($locator)) {
+                    $this->loadJQueryXPath();
+                    $this->debug('[Highlight XPath] ' . Locator::humanReadableString($locator));
+                    $this->webDriverModule->executeJs(sprintf('jQuery(document).xpath("%s").css(%s);', addslashes($locator), $this->cssStyle));
+                } else {
+                    $this->debug('[Highlight Selector] ' . Locator::humanReadableString($locator));
+                    $this->webDriverModule->executeJs(sprintf('jQuery("%s").css(%s);', addslashes($locator), $this->cssStyle));
+                }
             }
+        } catch(Exception $e) {
+            $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
         }
     }
 
