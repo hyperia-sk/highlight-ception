@@ -48,7 +48,7 @@ modules:
 
 - **module** - module responsible for browser interaction, default: WebDriver.
 - **timeWait** - wait seconds between `see`, `seeLink`, `seeElements`, `seeInField`, `click`, `clickWithLeftButton` and `clickWithRightButton` functions
-- **cssStyle** - custom css style for highlight element or text on a site
+- **cssStyle** - your custom css style for highlight element or text on a site
 
 ## Requirements
 
@@ -57,4 +57,9 @@ HighlightCeption needs the following components to run:
 - Codeception HighlightCeption is a module for **Codeception**. It will need a running version of this tool.
 - **WebDriver module** This tool only works with the webdriver module in Codeception at the moment.
 
+## Tests
+
+```bash
+./vendor/bin/codecept run -- -c test/integration
+```
 
