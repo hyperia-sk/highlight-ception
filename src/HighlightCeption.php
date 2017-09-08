@@ -228,8 +228,8 @@ class HighlightCeption extends Module
             $jQueryString = file_get_contents(__DIR__ . "/jquery.min.js");
             $this->webDriver->executeScript($jQueryString);
             $this->webDriver->executeScript('jQuery.noConflict();');
-            $this->loadJQueryHighlight();
         }
+        $this->loadJQueryHighlight();
     }
 
     /**
