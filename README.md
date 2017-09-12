@@ -4,7 +4,7 @@
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hyperia-sk/highlight-ception/master/LICENSE) 
 [![Latest Stable Version](https://poser.pugx.org/hyperia/highlight-ception/v/stable)](https://packagist.org/packages/hyperia/highlight-ception)
 
-This module can be used to display the current representation of css element or a text on a website with an expected. It was written on the shoulders of codeception and integrates in a very easy way.
+This module can be used to display the current representation of **css element**, **text** or **xpath** on a website with an expected. It was written on the shoulders of codeception and integrates in a very easy way.
 
 ![screenshot from 2017-08-13 15-20-53](https://user-images.githubusercontent.com/6382002/29250010-0bdb3cf6-803b-11e7-92af-f666caf497e4.png)
 
