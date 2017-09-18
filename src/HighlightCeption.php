@@ -19,9 +19,8 @@ class HighlightCeption extends Module
      */
     protected $config = [
         'cssStyle' => [
-            'background-color' => 'green',
+            'background-color' => 'yellow',
             'color' => 'black',
-            'font-weight' => 'bold',
         ],
         'timeWait' => 1,
         'module' => 'WebDriver'
