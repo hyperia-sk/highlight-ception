@@ -19,8 +19,9 @@ class HighlightCeption extends Module
      */
     protected $config = [
         'cssStyle' => [
-            'background-color' => 'yellow',
+            'background-color' => 'green',
             'color' => 'black',
+            'font-weight' => 'bold',
         ],
         'timeWait' => 1,
         'module' => 'WebDriver'
@@ -155,7 +156,6 @@ class HighlightCeption extends Module
             $this->debug('[Highlight Text] ' . $text);
             $el = $this->webDriver->findElement(WebDriverBy::xpath("//*[text()[contains(., '{$text}')]]"));
             $this->webDriver->executeScript("let str = arguments[0].innerHTML.replace(/({$text})/g, '<span style=\"{$this->cssStyle}\">$1</span>'); arguments[0].innerHTML = str;", [$el]);
-            // $this->webDriver->executeScript("arguments[0].setAttribute('style', 'background-color: yellow; color: black;')", [$el]);
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
         }
@@ -177,7 +177,7 @@ class HighlightCeption extends Module
                   // assume css
                   $el = $this->webDriver->findElement(WebDriverBy::cssSelector($locator));
               }
-              $this->webDriver->executeScript("arguments[0].setAttribute('style', 'background-color: yellow; color: black;')", [$el]);
+              $this->webDriver->executeScript("arguments[0].setAttribute('style', '{$this->cssStyle}')", [$el]);
             }
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
