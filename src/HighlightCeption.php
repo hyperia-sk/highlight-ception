@@ -64,7 +64,7 @@ class HighlightCeption extends Module
 
         $this->webDriverModule = $this->getModule($this->config['module']);
         $this->webDriver = $this->webDriverModule->webDriver;
-        $this->cssStyle = "background-color: {$this->config['cssStyle']['background-color']}; color: {$this->config['cssStyle']['color']};";
+        $this->cssStyle = $this->getInlineStyleStringFrom($this->config['cssStyle']);
         $this->timeWait = floatval($this->config['timeWait']);
         $this->test = $test;
     }
@@ -214,5 +214,19 @@ class HighlightCeption extends Module
         }
 
         return false;
+    }
+
+    /**
+    * Converts a css style array to inline css style string
+    *
+    * @param array $cssStyleArray
+    * @return string Inline CSS style string
+    */
+    private function getInlineStyleStringFrom($cssStyleArray) {
+      $inlineCss = "";
+      foreach ($cssStyleArray as $key=>$value) {
+        $inlineCss .= "{$key}: {$value};";
+      }
+      return $inlineCss;
     }
 }
