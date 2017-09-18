@@ -29,7 +29,7 @@ class HighlightCeption extends Module
     /**
      * Css style for hightlight text or element
      *
-     * @var array
+     * @var string
      */
     private $cssStyle = "";
 
