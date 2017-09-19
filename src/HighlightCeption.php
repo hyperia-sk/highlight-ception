@@ -7,13 +7,14 @@ use Codeception\Module;
 use Codeception\TestInterface;
 use Codeception\Exception\ConfigurationException;
 use Codeception\Util\Locator;
+use Facebook\WebDriver\WebDriverBy;
 
 class HighlightCeption extends Module
 {
 
     /**
      * Configuration array
-     * 
+     *
      * @var array
      */
     protected $config = [
@@ -27,10 +28,10 @@ class HighlightCeption extends Module
 
     /**
      * Css style for hightlight text or element
-     * 
-     * @var array
+     *
+     * @var string
      */
-    private $cssStyle = [];
+    private $cssStyle = "";
 
     /**
      * Time wait
@@ -63,8 +64,8 @@ class HighlightCeption extends Module
 
         $this->webDriverModule = $this->getModule($this->config['module']);
         $this->webDriver = $this->webDriverModule->webDriver;
+        $this->cssStyle = $this->getInlineStyleStringFrom($this->config['cssStyle']);
         $this->timeWait = floatval($this->config['timeWait']);
-        $this->cssStyle = json_encode($this->config['cssStyle']);
         $this->test = $test;
     }
 
@@ -85,8 +86,8 @@ class HighlightCeption extends Module
      */
     public function see($text, $selector = null)
     {
-        $this->highlightText($text);
         $this->webDriverModule->see($text, $selector);
+        $this->highlightText($text);
     }
 
     /**
@@ -94,8 +95,8 @@ class HighlightCeption extends Module
      */
     public function seeElement($selector, $attributes = [])
     {
-        $this->highlightElement($selector);
         $this->webDriverModule->seeElement($selector, $attributes);
+        $this->highlightElement($selector);
     }
 
     /**
@@ -103,8 +104,8 @@ class HighlightCeption extends Module
      */
     public function seeLink($text, $url = null)
     {
-        $this->highlightText($text);
         $this->webDriverModule->seeLink($text, $url);
+        $this->highlightText($text);
     }
 
     /**
@@ -112,8 +113,8 @@ class HighlightCeption extends Module
      */
     public function seeInField($field, $value)
     {
-        $this->highlightElement($field);
         $this->webDriverModule->seeInField($field, $value);
+        $this->highlightElement($field);
     }
 
     /**
@@ -121,8 +122,8 @@ class HighlightCeption extends Module
      */
     public function click($link, $context = null)
     {
-        $this->highlightElement($context);
         $this->webDriverModule->click($link, $context);
+        $this->highlightElement($context);
     }
 
     /**
@@ -130,8 +131,8 @@ class HighlightCeption extends Module
      */
     public function clickWithLeftButton($cssOfXPath = null, $offsetX = null, $offsetY = null)
     {
-        $this->highlightElement($cssOfXPath);
         $this->webDriverModule->clickWithLeftButton($cssOfXPath, $offsetX, $offsetY);
+        $this->highlightElement($cssOfXPath);
     }
 
     /**
@@ -139,24 +140,21 @@ class HighlightCeption extends Module
      */
     public function clickWithRightButton($cssOfXPath = null, $offsetX = null, $offsetY = null)
     {
-        $this->highlightElement($cssOfXPath);
         $this->webDriverModule->clickWithRightButton($cssOfXPath, $offsetX, $offsetY);
+        $this->highlightElement($cssOfXPath);
     }
 
     /**
      * Highlight text on site
-     * 
+     *
      * @param string $text
      */
     private function highlightText($text)
     {
         try {
-            $this->loadJQuery();
             $this->debug('[Highlight Text] ' . $text);
-            $this->webDriverModule->executeJs('jQuery(document).ready(function (){
-                jQuery("body").highlight("' . $text . '");
-                ' . sprintf('jQuery(".highlight").css(%s);', $this->cssStyle) . '
-            });');
+            $el = $this->webDriver->findElement(WebDriverBy::xpath("//*[text()[contains(., '{$text}')]]"));
+            $this->webDriver->executeScript("let str = arguments[0].innerHTML.replace(/({$text})/g, '<span style=\"{$this->cssStyle}\">$1</span>'); arguments[0].innerHTML = str;", [$el]);
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
         }
@@ -164,7 +162,7 @@ class HighlightCeption extends Module
 
     /**
      * Highlight element on site
-     * 
+     *
      * @param string|array $selector
      */
     private function highlightElement($selector)
@@ -172,15 +170,13 @@ class HighlightCeption extends Module
         try {
             $locator = $this->getSelector($selector);
             if ($locator) {
-                $this->loadJQuery();
                 if (Locator::isXPath($locator)) {
-                    $this->loadJQueryXPath();
-                    $this->debug('[Highlight XPath] ' . Locator::humanReadableString($locator));
-                    $this->webDriverModule->executeJs(sprintf('jQuery(document).xpath("%s").css(%s);', addslashes($locator), $this->cssStyle));
+                  $el = $this->webDriver->findElement(WebDriverBy::xpath($locator));
                 } else {
-                    $this->debug('[Highlight Selector] ' . Locator::humanReadableString($locator));
-                    $this->webDriverModule->executeJs(sprintf('jQuery("%s").css(%s);', addslashes($locator), $this->cssStyle));
-                }
+                  // assume css
+                  $el = $this->webDriver->findElement(WebDriverBy::cssSelector($locator));
+              }
+              $this->webDriver->executeScript("arguments[0].setAttribute('style', '{$this->cssStyle}')", [$el]);
             }
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
@@ -189,10 +185,10 @@ class HighlightCeption extends Module
 
     /**
      * Resolve selector
-     * 
+     *
      * @param string|array $selector
      * @return boolean
-     * @todo 
+     * @todo
      */
     private function getSelector($selector)
     {
@@ -220,38 +216,16 @@ class HighlightCeption extends Module
     }
 
     /**
-     * Load jQuery 
-     */
-    private function loadJQuery()
-    {
-        if ($this->webDriver->executeScript('return !window.jQuery;')) {
-            $jQueryString = file_get_contents(__DIR__ . "/jquery.min.js");
-            $this->webDriver->executeScript($jQueryString);
-            $this->webDriver->executeScript('jQuery.noConflict();');
-        }
-        $this->loadJQueryHighlight();
+    * Converts a css style array to inline css style string
+    *
+    * @param array $cssStyleArray
+    * @return string Inline CSS style string
+    */
+    private function getInlineStyleStringFrom($cssStyleArray) {
+      $inlineCss = "";
+      foreach ($cssStyleArray as $key=>$value) {
+        $inlineCss .= "{$key}: {$value};";
+      }
+      return $inlineCss;
     }
-
-    /**
-     * Load jQuery.XPath
-     */
-    private function loadJQueryXPath()
-    {
-        if ($this->webDriver->executeScript('return !window.jQuery.fn.xpath;')) {
-            $jQueryXPath = file_get_contents(__DIR__ . "/jquery.xpath.min.js");
-            $this->webDriver->executeScript($jQueryXPath);
-        }
-    }
-
-    /**
-     * Load jQuery.Highlight
-     */
-    private function loadJQueryHighlight()
-    {
-        if ($this->webDriver->executeScript('return !window.jQuery.fn.highlight;')) {
-            $jQueryString = file_get_contents(__DIR__ . "/jquery.highlight.min.js");
-            $this->webDriver->executeScript($jQueryString);
-        }
-    }
-
 }
