@@ -39,6 +39,7 @@ modules:
         - HighlightCeption:
             module: WebDriver
             timeWait: 2
+            cssClassName: 'hyperia-hc'
             cssStyle:
                 background-color: yellow
                 color: black
@@ -48,6 +49,7 @@ modules:
 
 - **module** - module responsible for browser interaction, default: WebDriver.
 - **timeWait** - wait seconds between `see`, `seeLink`, `seeElements`, `seeInField`, `click`, `clickWithLeftButton` and `clickWithRightButton` functions
+- **cssClassName** - css class name to use for css style we inject in page
 - **cssStyle** - your custom css style for highlight element or text on a site
 
 ## Requirements
