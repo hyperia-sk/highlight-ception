@@ -245,11 +245,19 @@ class HighlightCeption extends Module
     private function injectCssClassToPage()
     {
         $cssClassAsString = $this->makeCssClassFrom($this->config['cssStyle']);
-        $js = "let css = \"{$cssClassAsString}\";" .
-                "let elem = document.createElement('style');" .
-                "elem.type = 'text/css';" .
-                "if (elem.styleSheet) { elem.styleSheet.cssText = css; } else { elem.appendChild(document.createTextNode(css));}" .
-                "document.getElementsByTagName('head')[0].appendChild(elem);";
+        $js = <<<JS
+            let css = "$cssClassAsString";
+            let elem = document.createElement('style');
+            elem.type = 'text/css';
+
+            if (elem.styleSheet) { 
+                elem.styleSheet.cssText = css; 
+            } else { 
+                elem.appendChild(document.createTextNode(css));
+            }
+
+            document.getElementsByTagName('head')[0].appendChild(elem);
+JS;
         $this->webDriver->executeScript($js);
     }
 
