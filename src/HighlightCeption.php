@@ -18,6 +18,7 @@ class HighlightCeption extends Module
      * @var array
      */
     protected $config = [
+		'cssClassName' => 'hyperia-hc',
         'cssStyle' => [
             'background-color' => 'yellow',
             'color' => 'black',
@@ -25,13 +26,13 @@ class HighlightCeption extends Module
         'timeWait' => 1,
         'module' => 'WebDriver'
     ];
-
-    /**
-     * Css style for hightlight text or element
-     *
-     * @var string
-     */
-    private $cssStyle = "";
+	
+	/**
+	 * Name to use for css style we inject in page
+	 *
+	 * @var string
+	 */
+	 private $cssClassName = "";
 
     /**
      * Time wait
@@ -63,8 +64,8 @@ class HighlightCeption extends Module
         }
 
         $this->webDriverModule = $this->getModule($this->config['module']);
+		$this->cssClassName = $this->config['cssClassName'];
         $this->webDriver = $this->webDriverModule->webDriver;
-        $this->cssStyle = $this->getInlineStyleStringFrom($this->config['cssStyle']);
         $this->timeWait = floatval($this->config['timeWait']);
         $this->test = $test;
     }
@@ -152,9 +153,12 @@ class HighlightCeption extends Module
     private function highlightText($text)
     {
         try {
+			$this->injectCssClassToPage();
             $this->debug('[Highlight Text] ' . $text);
             $el = $this->webDriver->findElement(WebDriverBy::xpath("//*[text()[contains(., '{$text}')]]"));
-            $this->webDriver->executeScript("let str = arguments[0].innerHTML.replace(/({$text})/g, '<span style=\"{$this->cssStyle}\">$1</span>'); arguments[0].innerHTML = str;", [$el]);
+            $origHtml = $this->webDriver->executeScript("let origHtml = arguments[0].innerHTML; let hlghtHtml = arguments[0].innerHTML.replace(/({$text})/g, '<span class=\"{$this->cssClassName}\">$1</span>'); arguments[0].innerHTML = hlghtHtml; return origHtml;", [$el]);
+			$this->webDriverModule->wait($this->timeWait);
+			$this->webDriver->executeScript("arguments[0].innerHTML = arguments[1];", [$el, $origHtml]);
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
         }
@@ -168,6 +172,7 @@ class HighlightCeption extends Module
     private function highlightElement($selector)
     {
         try {
+			$this->injectCssClassToPage();
             $locator = $this->getSelector($selector);
             if ($locator) {
                 if (Locator::isXPath($locator)) {
@@ -176,7 +181,9 @@ class HighlightCeption extends Module
                   // assume css
                   $el = $this->webDriver->findElement(WebDriverBy::cssSelector($locator));
               }
-              $this->webDriver->executeScript("arguments[0].setAttribute('style', '{$this->cssStyle}')", [$el]);
+              $className = $this->webDriver->executeScript("let className = arguments[0].className; arguments[0].className += ' {$this->cssClassName}'; return className;", [$el]);
+			  $this->webDriverModule->wait($this->timeWait);
+			  $this->webDriver->executeScript("arguments[0].className = arguments[1];", [$el, $className]);
             }
         } catch(Exception $e) {
             $this->debug(sprintf("[Highlight Exception] %s \n%s", $e->getMessage(), $e->getTraceAsString()));
@@ -214,18 +221,33 @@ class HighlightCeption extends Module
 
         return false;
     }
-
+	
     /**
-    * Converts a css style array to inline css style string
+    * Creates a css style class to inject into page
     *
     * @param array $cssStyleArray
-    * @return string Inline CSS style string
+    * @return string CSS Style Class as a string
     */
-    private function getInlineStyleStringFrom($cssStyleArray) {
-      $inlineCss = "";
+    private function makeCssClassFrom($cssStyleArray) {
+      $cssClass = ".{$this->cssClassName} {";
       foreach ($cssStyleArray as $key=>$value) {
-        $inlineCss .= "{$key}: {$value};";
+        $cssClass .= "{$key}: {$value};";
       }
-      return $inlineCss;
+	  $cssClass .= "}";
+      return $cssClass;
     }
+
+    /**
+    * Injects a css style into the page to append to elements
+	* that we want to highlight.
+    */
+	private function injectCssClassToPage() {
+		$cssClassAsString = $this->makeCssClassFrom($this->config['cssStyle']);
+ 		$js = "let css = \"{$cssClassAsString}\";" .
+			"let elem = document.createElement('style');" .
+			"elem.type = 'text/css';" .
+			"if (elem.styleSheet) { elem.styleSheet.cssText = css; } else { elem.appendChild(document.createTextNode(css));}" .
+			"document.getElementsByTagName('head')[0].appendChild(elem);";
+		$this->webDriver->executeScript($js);
+	}
 }
