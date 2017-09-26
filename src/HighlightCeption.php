@@ -18,6 +18,7 @@ class HighlightCeption extends Module
      * @var array
      */
     protected $config = [
+		'cssClassName' => 'hyperia-hc',
         'cssStyle' => [
             'background-color' => 'yellow',
             'color' => 'black',
@@ -31,7 +32,7 @@ class HighlightCeption extends Module
 	 *
 	 * @var string
 	 */
-	 private $styleName = "hlght";
+	 private $cssClassName = "";
 
     /**
      * Time wait
@@ -63,6 +64,7 @@ class HighlightCeption extends Module
         }
 
         $this->webDriverModule = $this->getModule($this->config['module']);
+		$this->cssClassName = $this->config['cssClassName'];
         $this->webDriver = $this->webDriverModule->webDriver;
         $this->timeWait = floatval($this->config['timeWait']);
         $this->test = $test;
@@ -154,7 +156,7 @@ class HighlightCeption extends Module
 			$this->injectCssClassToPage();
             $this->debug('[Highlight Text] ' . $text);
             $el = $this->webDriver->findElement(WebDriverBy::xpath("//*[text()[contains(., '{$text}')]]"));
-            $origHtml = $this->webDriver->executeScript("let origHtml = arguments[0].innerHTML; let hlghtHtml = arguments[0].innerHTML.replace(/({$text})/g, '<span class=\"{$this->styleName}\">$1</span>'); arguments[0].innerHTML = hlghtHtml; return origHtml;", [$el]);
+            $origHtml = $this->webDriver->executeScript("let origHtml = arguments[0].innerHTML; let hlghtHtml = arguments[0].innerHTML.replace(/({$text})/g, '<span class=\"{$this->cssClassName}\">$1</span>'); arguments[0].innerHTML = hlghtHtml; return origHtml;", [$el]);
 			$this->webDriverModule->wait($this->timeWait);
 			$this->webDriver->executeScript("arguments[0].innerHTML = arguments[1];", [$el, $origHtml]);
         } catch(Exception $e) {
@@ -179,7 +181,7 @@ class HighlightCeption extends Module
                   // assume css
                   $el = $this->webDriver->findElement(WebDriverBy::cssSelector($locator));
               }
-              $className = $this->webDriver->executeScript("let className = arguments[0].className; arguments[0].className += ' {$this->styleName}'; return className;", [$el]);
+              $className = $this->webDriver->executeScript("let className = arguments[0].className; arguments[0].className += ' {$this->cssClassName}'; return className;", [$el]);
 			  $this->webDriverModule->wait($this->timeWait);
 			  $this->webDriver->executeScript("arguments[0].className = arguments[1];", [$el, $className]);
             }
@@ -227,7 +229,7 @@ class HighlightCeption extends Module
     * @return string CSS Style Class as a string
     */
     private function makeCssClassFrom($cssStyleArray) {
-      $cssClass = ".{$this->styleName} {";
+      $cssClass = ".{$this->cssClassName} {";
       foreach ($cssStyleArray as $key=>$value) {
         $cssClass .= "{$key}: {$value};";
       }
